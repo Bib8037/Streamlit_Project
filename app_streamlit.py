@@ -32,13 +32,7 @@ def main():
                 # Display new DataFrame
                 st.write("New DataFrame:")
                 st.write(new_df)
-                # Show line graph
-                if len(selected_columns) >= 2:
-                    line_chart = new_df.plot(x=new_df.columns[0], y=new_df.columns[1:], kind='line')
-                    plt.title("Line Graph")
-                    plt.xlabel(new_df.columns[0])
-                    plt.ylabel("Value")
-                    st.pyplot(line_chart.figure)
+        
             
 
 if __name__ == "__main__":
