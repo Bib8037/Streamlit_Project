@@ -23,6 +23,7 @@ from pandas.api.types import (
 import numpy as np
 import seaborn as sns
 import plotly.express as px
+import shap
 
 
 
@@ -324,6 +325,17 @@ def Auto_ML():
         fig = px.bar(df, x='Feature', y='Importance', orientation='v')
         fig.update_layout(xaxis_tickangle=-90)
         st.plotly_chart(fig)
+
+        # Explaining the model's predictions using SHAP values
+        # https://github.com/slundberg/shap
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(X)
+
+        fig, ax = plt.subplots()
+        plt.title('Feature importance based on SHAP values')
+        shap.summary_plot(shap_values, X)
+        # st.pyplot(bbox_inches='tight')
+        st.pyplot(fig)
 
 
       
