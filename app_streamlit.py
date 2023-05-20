@@ -10,27 +10,27 @@ def main():
     if input_name:
         st.write(f"Hello {input_name} ")
             
-    show_btn = st.button("Show Code!")
-    if show_btn:
+    # show_btn = st.button("Show Code!")
+    # if show_btn:
 
-        with st.echo():
+        # with st.echo():
             
-            st.title("CSV Data Selection")
+    st.title("CSV Data Selection")
 
-            # Upload CSV file
-            uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
-            if uploaded_file is not None:
-                df = pd.read_csv(uploaded_file)
+    # Upload CSV file
+    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
 
-                # Display column selection multi-select
-                selected_columns = st.multiselect("Select columns", df.columns)
+        # Display column selection multi-select
+        selected_columns = st.multiselect("Select columns", df.columns)
 
-                # Create new DataFrame with selected columns
-                new_df = df[selected_columns]
+        # Create new DataFrame with selected columns
+        new_df = df[selected_columns]
 
-                # Display new DataFrame
-                st.write("New DataFrame:")
-                st.write(new_df)
+        # Display new DataFrame
+        st.write("New DataFrame:")
+        st.write(new_df)
         
             
 
