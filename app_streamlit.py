@@ -262,6 +262,14 @@ def Auto_ML():
         st.write("Model Evaluation:")
         best_model_name = ""
         best_model_score = 0.0
+
+       
+        y_mean = y_train.mean()
+        r2_threshold = st.sidebar.slider(f"R2 Score Threshold", 0.0, 1.0, 0.9, key=f'r2_threshold_slide')
+        mae_threshold_percentage = st.sidebar.slider(f"MAE Threshold as a percentage of Y value", 0.0, 1.0, 0.05, key=f'mae_threshold_percentage_slide')
+        rmse_threshold = st.sidebar.slider(f"RMSE Threshold", 0, 100, 15, key=f'rmse_threshold_slide')
+        mae_threshold = mae_threshold_percentage  * y_mean
+
         for a in algo:
             model = a[0]
             model.fit(X_train,y_train)
@@ -295,12 +303,8 @@ def Auto_ML():
 
            
             y_mean = y_train.mean()
-            r2_threshold = st.sidebar.slider("R2 Score Threshold", 0.0, 1.0, 0.9, key='r2_threshold_slider')
-            mae_threshold_percentage = st.sidebar.slider("MAE Threshold as a percentage of Y value", 0.0, 1.0, 0.05, key='mae_threshold_percentage_slider')
-            rmse_threshold = st.sidebar.slider("RMSE Threshold", 0, 100, 15, key='rmse_threshold_slider')
             mae_threshold = mae_threshold_percentage  * y_mean
     
-
             # Continue with the rest of the model evaluation as before
             r2_train = r2_score(y_train, y_prediction_train)
             r2_test = r2_score(y_test, y_prediction_test)
