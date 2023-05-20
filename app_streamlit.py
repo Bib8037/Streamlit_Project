@@ -294,9 +294,9 @@ def Auto_ML():
 
            
 
-            if r2_score(y_prediction_train, y_train)<0.85 or r2_score(y_prediction_test, y_test) <0.85 or mae(y_prediction_train, y_train) > 5 or rmse(y_prediction_test, y_test)>5 or rmse(y_prediction_train, y_train) > 5 or rmse(y_prediction_test, y_test)>5:
+            if r2_score(y_prediction_train, y_train)<0.85 or r2_score(y_prediction_test, y_test) <0.85 or mae(y_prediction_train, y_train) > 5 or rmse(y_prediction_test, y_test)>5 or rmse(y_prediction_train, y_train) > 15 or rmse(y_prediction_test, y_test)>15:
                 st.write('**❌ Model Underfit**')
-            elif ((mae(y_prediction_train, y_train) - mae(y_prediction_test, y_test)) <=2) and ((mae(y_prediction_test, y_test) - mae(y_prediction_train, y_train)) <=2) and ((rmse(y_prediction_train, y_train) - rmse(y_prediction_test, y_test)) <=5) and ((rmse(y_prediction_test, y_test) - rmse(y_prediction_train, y_train)) <=5): 
+            elif ((mae(y_prediction_train, y_train) - mae(y_prediction_test, y_test)) <=5) and ((mae(y_prediction_test, y_test) - mae(y_prediction_train, y_train)) <=5) and ((rmse(y_prediction_train, y_train) - rmse(y_prediction_test, y_test)) <=15) and ((rmse(y_prediction_test, y_test) - rmse(y_prediction_train, y_train)) <=15): 
                 st.write('**✅ Good Model**')
             else:
                 st.write('**❌ Model Overfit**')
