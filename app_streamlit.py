@@ -294,11 +294,30 @@ def Auto_ML():
                 best_model_score = cv_score
 
            
+            y_mean = y_train.mean()
+            r2_threshold = st.sidebar.slider("R2 Score Threshold", 0.0, 1.0, 0.90)
+            mae_threshold_percentage = st.sidebar.slider("MAE Threshold as a percentage of Y value", 0.0, 1.0, 0.05)
+            rmse_threshold = st.sidebar.slider("RMSE Threshold", 0, 100, 15)
+            mae_threshold = mae_threshold_percentage  * y_mean
+    
 
-            if r2_score(y_prediction_train, y_train)<0.90 or r2_score(y_prediction_test, y_test) <0.90 or mae(y_prediction_train, y_train) > 5 or rmse(y_prediction_test, y_test)>5 or rmse(y_prediction_train, y_train) > 15 or rmse(y_prediction_test, y_test)>15:
+            # Continue with the rest of the model evaluation as before
+            r2_train = r2_score(y_train, y_prediction_train)
+            r2_test = r2_score(y_test, y_prediction_test)
+            mae_train = mae(y_train, y_prediction_train)
+            mae_test = mae(y_test, y_prediction_test)
+            rmse_train = rmse(y_train, y_prediction_train)
+            rmse_test = rmse(y_test, y_prediction_test)
+
+            # Check if the model is underfitting
+            if r2_train < r2_threshold or r2_test < r2_threshold or mae_train > mae_threshold or rmse_train > rmse_threshold or rmse_test > rmse_threshold:
                 st.write('**❌ Model Underfit**')
-            elif ((mae(y_prediction_train, y_train) - mae(y_prediction_test, y_test)) <=5) and ((mae(y_prediction_test, y_test) - mae(y_prediction_train, y_train)) <=5) and ((rmse(y_prediction_train, y_train) - rmse(y_prediction_test, y_test)) <=15) and ((rmse(y_prediction_test, y_test) - rmse(y_prediction_train, y_train)) <=15): 
+
+            # Check if the model is a good fit
+            elif abs(mae_train - mae_test) <= mae_threshold and abs(rmse_train - rmse_test) <= rmse_threshold:
                 st.write('**✅ Good Model**')
+
+            # Otherwise, the model is overfitting
             else:
                 st.write('**❌ Model Overfit**')
 
