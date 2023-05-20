@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
+import itertools
 
 
 def main():
@@ -68,9 +69,37 @@ def main():
         if num_cols < num_rows * 4:
             for i in range(num_cols, num_rows * 4):
                 fig.delaxes(axs[i])
+        # Show the plot
+        st.pyplot(fig)
+
+        # Calculate the number of scatter plots
+        num_plots = len(selected_columns) * (len(selected_columns) - 1) // 2
+
+        # Calculate the number of rows needed for the subplot grid
+        num_rows = num_plots // 4
+        if num_plots % 4: 
+            num_rows += 1  # Add an extra row if the plots don't divide evenly by 4
+
+        # Prepare subplots
+        fig, axs = plt.subplots(num_rows, 4, figsize=(20, 5 * num_rows))
+        axs = axs.ravel()  # Flatten the array to iterate easily
+
+        # Plotting scatter plots of each pair of selected columns
+        i = 0
+        for pair in itertools.combinations(selected_columns, 2):
+            axs[i].scatter(new_df[pair[0]], new_df[pair[1]])
+            axs[i].set_title(f"Scatter plot: {pair[0]} vs {pair[1]}")
+            i += 1
+
+        # If less than num_rows*4 plots, remove the empty subplots
+        if num_plots < num_rows * 4:
+            for i in range(num_plots, num_rows * 4):
+                fig.delaxes(axs[i])
 
         # Show the plot
         st.pyplot(fig)
+
+
 
         models = {
         "Linear Regression": LinearRegression(),
