@@ -7,11 +7,22 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 import itertools
+# import openai
+from pandas.api.types import (
+    is_categorical_dtype,
+    is_datetime64_any_dtype,
+    is_numeric_dtype,
+    is_object_dtype,
+)
+import numpy as np
+import seaborn as sns
 
 
-def main():
+
+
+def Auto_ML():
     st.title("Hello World 😎 ")
-    st.markdown("## This is streamlit project")
+    st.markdown("## This is streamlit project to help develop Machine Learning")
 
     input_name = st.text_input("Input your name")
     if input_name:
@@ -21,7 +32,11 @@ def main():
     # if show_btn:
 
         # with st.echo():
-            
+    #Slidebar - Specify parameter settings
+    st.sidebar.header('Set Parameters')
+    split_size = st.sidebar.slider('Data split ratio (% forTraining Set)',10,90,80,5)
+    seed_number = st.sidebar.slider('Set the random seed number', 1, 100, 70, 1)
+                
     st.markdown("## CSV Data Selection")
 
     # Upload CSV file
@@ -39,6 +54,81 @@ def main():
         st.write("New DataFrame:")
         st.write(new_df)
 
+        modify = st.checkbox("Add filters")
+
+        def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+            """
+            Adds a UI on top of a dataframe to let viewers filter columns
+
+            Args:
+                df (pd.DataFrame): Original dataframe
+
+            Returns:
+                pd.DataFrame: Filtered dataframe
+            """
+            if not modify:
+                return df
+
+            df = df.copy()
+
+            for col in new_df.columns:
+                if is_object_dtype(new_df[col]):
+                    try:
+                        new_df[col] = pd.to_datetime(new_df[col])
+                    except Exception:
+                        pass
+
+                if is_datetime64_any_dtype(new_df[col]):
+                    new_df[col] = new_df[col].dt.tz_localize(None)
+
+            modification_container = st.container()
+
+            with modification_container:
+                to_filter_columns = st.multiselect("Filter dataframe on", new_df.columns)
+                for column in to_filter_columns:
+                    left, right = st.columns((1, 20))
+                    # Treat columns with < 10 unique values as categorical
+                    if is_categorical_dtype(new_df[column]) or new_df[column].nunique() < 10:
+                        user_cat_input = right.multiselect(
+                            f"Values for {column}",
+                            new_df[column].unique(),
+                            default=list(new_df[column].unique()),
+                        )
+                        new_df = new_df[new_df[column].isin(user_cat_input)]
+                    elif is_numeric_dtype(new_df[column]):
+                        _min = float(new_df[column].min())
+                        _max = float(new_df[column].max())
+                        step = (_max - _min) / 100
+                        user_num_input = right.slider(
+                            f"Values for {column}",
+                            min_value=_min,
+                            max_value=_max,
+                            value=(_min, _max),
+                            step=step,
+                        )
+                        new_df = new_df[new_df[column].between(*user_num_input)]
+                    elif is_datetime64_any_dtype(new_df[column]):
+                        user_date_input = right.date_input(
+                            f"Values for {column}",
+                            value=(
+                                new_df[column].min(),
+                                new_df[column].max(),
+                            ),
+                        )
+                        if len(user_date_input) == 2:
+                            user_date_input = tuple(map(pd.to_datetime, user_date_input))
+                            start_date, end_date = user_date_input
+                            new_df = new_df.loc[new_df[column].between(start_date, end_date)]
+                    else:
+                        user_text_input = right.text_input(
+                            f"Substring or regex in {column}",
+                        )
+                        if user_text_input:
+                            new_df = new_df[new_df[column].astype(str).str.contains(user_text_input)]
+
+            return new_df
+        
+        new_df = filter_dataframe(new_df)
         
         # Prepare subplots
         st.write("Show Data Distribution:")
@@ -100,6 +190,17 @@ def main():
         # Show the plot
         st.pyplot(fig)
 
+        #HeatMap correlation
+        st.write('Intercorrelation Matrix Heatmap')
+        corr = new_df.corr()
+        mask = np.zeros_like(corr)
+        mask[np.triu_indices_from(mask)] = True
+        with sns.axes_style("white"):
+            f, ax = plt.subplots(figsize=(7, 5))
+            ax = sns.heatmap(corr, mask=mask, vmax=1, square=True)
+        st.pyplot(f)
+        st.write('---')
+
 
 
         models = {
@@ -130,8 +231,47 @@ def main():
                 best_model_score = cv_score
 
         st.write(f"Best Model: {best_model_name} with score: {best_model_score}")
-                    
-            
+                        
+# def Open_AI(): 
+    
+#     st.title("Hello World 😎 ")
+#     st.markdown("## This is streamlit project to help summarize content")
+#     st.title("AI Assistant : openAI + Streamlit")
+#     prompt = st.text_input("Enter your message:", key='prompt')
+#     api_secret = "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"
+#     openai.api_key = api_secret#st.secrets[api_secret]
+
+#     # This function uses the Ope"nAI Completion API to generate a 
+#     # response based on the given prompt. The temperature parameter controls 
+#     # the randomness of the generated response. A higher temperature will result 
+#     # in more random responses, 
+#     # while a lower temperature will result in more predictable responses.
+
+#     def generate_response(prompt):
+#         completions = openai.Completion.create (
+#             engine="text-davinci-003",
+#             prompt=prompt,
+#             max_tokens=1024,
+#             n=1,
+#             stop=None,
+#             temperature=0.5,
+#         )
+
+#         message = completions.choices[0].text
+#         return message
+
+    
+#     if st.button("Submit", key='submit'):
+#         response = generate_response(prompt)
+#         st.success(response)
+    
 
 if __name__ == "__main__":
-    main()
+
+
+    page_names_to_funcs = {
+            "Auto Machine Learning": Auto_ML,
+            # "Open AI Tools": Open_AI,
+    }
+    demo_name = st.sidebar.selectbox("Choose a demo", page_names_to_funcs.keys())
+    page_names_to_funcs[demo_name]()
