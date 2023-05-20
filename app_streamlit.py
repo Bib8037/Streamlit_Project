@@ -295,9 +295,9 @@ def Auto_ML():
 
            
             y_mean = y_train.mean()
-            r2_threshold = st.sidebar.slider("R2 Score Threshold", 0.0, 1.0, 0.9, key='r2')
-            mae_threshold_percentage = st.sidebar.slider("MAE Threshold as a percentage of Y value", 0.0, 1.0, 0.05, key='mae')
-            rmse_threshold = st.sidebar.slider("RMSE Threshold", 0, 100, 15, key='rmse')
+            r2_threshold = st.sidebar.slider("R2 Score Threshold", 0.0, 1.0, 0.9, key='r2_threshold_slider')
+            mae_threshold_percentage = st.sidebar.slider("MAE Threshold as a percentage of Y value", 0.0, 1.0, 0.05, key='mae_threshold_percentage_slider')
+            rmse_threshold = st.sidebar.slider("RMSE Threshold", 0, 100, 15, key='rmse_threshold_slider')
             mae_threshold = mae_threshold_percentage  * y_mean
     
 
