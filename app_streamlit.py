@@ -2,10 +2,16 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, LassoLars, BayesianRidge, PassiveAggressiveRegressor
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor, BaggingRegressor, AdaBoostRegressor, ExtraTreesRegressor
+from sklearn.svm import SVR, NuSVR
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.metrics import mean_squared_error as rmse 
+from sklearn.metrics import mean_absolute_error as mae
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
 import itertools
 # import openai
 from pandas.api.types import (
@@ -16,6 +22,7 @@ from pandas.api.types import (
 )
 import numpy as np
 import seaborn as sns
+import plotly.express as px
 
 
 
@@ -203,11 +210,41 @@ def Auto_ML():
 
 
 
-        models = {
-        "Linear Regression": LinearRegression(),
-        "Decision Tree": DecisionTreeRegressor(),
-        "Random Forest": RandomForestRegressor(),
-}
+        #Check accuracy of model
+        algo = [
+        [LinearRegression(), 
+        'LinearRegression', 'This is a simple linear model that fits a straight line through the data to predict the target variable. It assumes that the relationship between the input features and the target variable is linear.'],
+        [RandomForestRegressor(), 
+        'RandomForestRegressor', 'This is also an ensemble model that combines multiple decision trees to make predictions. It fits each tree to a randomly selected subset of the features and tries to minimize the mean squared error'],
+        [SVR(), 
+        'SVR', 'Support Vector Regression is a model that tries to find a hyperplane that maximizes the margin around the predicted values. It is effective in high-dimensional spaces and when the number of features is larger than the number of samples.'],
+        [NuSVR(), 
+        'NuSVR', 'This is similar to SVR but uses a slightly different formulation that allows for more control over the number of support vectors.'],
+        [KNeighborsRegressor(),
+        'KNeighborsRegressor', 'This is a non-linear model that predicts the target variable based on the mean value of the k-nearest neighbors in the training data.'],
+        [Ridge(),
+        'Ridge', 'This is a linear model that adds an L2 regularization term to the cost function to prevent overfitting.'],
+        [Lasso(),
+        'Lass', ' This is a linear model that adds an L1 regularization term to the cost function to select only the most important features.'],
+        [ElasticNet(),
+        'ElasticNet', 'This is a linear model that adds both L1 and L2 regularization terms to the cost function to balance between feature selection and preventing overfitting.'],
+        # [LassoLars(),'LassoLars'],
+        [BayesianRidge(),
+        'BayesianRidge', 'This is a linear model that uses Bayesian methods to perform regression and estimates the posterior distribution over the model parameters.'],
+        [PassiveAggressiveRegressor(),
+        'PassiveAggressiveRegressor', ' This is a linear model that updates the model parameters based on whether the prediction error exceeds a threshold.'],
+        [MLPRegressor(),
+        'MLPRegressor', ' This is a neural network model that consists of multiple layers of interconnected nodes that can model non-linear relationships between the input features and the target variable.'],
+        [BaggingRegressor(), 
+        'BaggingRegressor', 'This is another ensemble model that combines multiple decision trees to make predictions. It fits each tree to a random subset of the data and tries to minimize the mean squared error.'],
+        [AdaBoostRegressor(), 
+        'AdaBoostRegressor', 'This is also an ensemble model that combines multiple decision trees to make predictions. It fits each tree to the residuals of the previous tree and tries to minimize the exponential loss function.'],
+        [ExtraTreesRegressor(), 
+        'ExtraTreesRegressor', 'This is another ensemble model that combines multiple decision trees to make predictions. It fits each tree to a random subset of the data and the features, and tries to minimize the mean squared error.'],
+        [GradientBoostingRegressor(), 
+        'GradientBoostingRegressor', 'This is an ensemble model that combines multiple decision trees to make predictions. It fits each tree to the residuals of the previous tree and tries to minimize the mean squared error.']
+        ]
+        
         # Select target variable
         st.write("Develop Machine Learning Model :")
         target = st.selectbox("Select target variable", new_df.columns)
@@ -215,22 +252,82 @@ def Auto_ML():
         X = new_df.drop(target, axis=1)
         y = new_df[target]
 
-        # Split the data
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        
+        #slite train and test
+        test_size= 1- (split_size/100)
+        X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=test_size,random_state= seed_number)
 
         # Train and evaluate models
         st.write("Model Evaluation:")
         best_model_name = ""
         best_model_score = 0.0
-        for name, model in models.items():
-            model.fit(X_train, y_train)
+        for a in algo:
+            model = a[0]
+            model.fit(X_train,y_train)
+            
+            st.subheader(str(a[1])+" model : " )
+            st.write(str(a[2]))
+          
+            #Train
+            y_prediction_train = model.predict(X_train)
+            st.write('Train : Root Mean squared error (RMSE): %.2f'
+            % rmse(y_prediction_train, y_train))
+            st.write('Train : Mean absolute error (MAE): %.2f'
+            % mae(y_prediction_train, y_train))
+            st.write('Train : Coefficient of determination (R^2): %.2f'
+            % r2_score(y_prediction_train, y_train))
+            #Test
+            y_prediction_test = model.predict(X_test)
+            st.write('Test : Root Mean squared error (RMSE): %.2f'
+            % rmse(y_prediction_test, y_test))
+            st.write('Test : Mean absolute error (MAE): %.2f'
+            % mae(y_prediction_test, y_test))
+            st.write('Test : Coefficient of determination (R^2): %.2f'
+            % r2_score(y_prediction_test, y_test))
+
             cv_score = cross_val_score(model, X_train, y_train, cv=5).mean()
-            st.write(f"{name} cross-validation score: {cv_score}")
+            st.write(str(a[1]) +": cross-validation score: " +str(cv_score))
+            
             if cv_score > best_model_score:
-                best_model_name = name
+                best_model_name = str(a[1])
                 best_model_score = cv_score
 
+           
+
+            if r2_score(y_prediction_train, y_train)<0.85 or r2_score(y_prediction_test, y_test) <0.85 or mae(y_prediction_train, y_train) > 5 or rmse(y_prediction_test, y_test)>5 or rmse(y_prediction_train, y_train) > 5 or rmse(y_prediction_test, y_test)>5:
+                st.write('**❌ Model Underfit**')
+            elif ((mae(y_prediction_train, y_train) - mae(y_prediction_test, y_test)) <=2) and ((mae(y_prediction_test, y_test) - mae(y_prediction_train, y_train)) <=2) and ((rmse(y_prediction_train, y_train) - rmse(y_prediction_test, y_test)) <=5) and ((rmse(y_prediction_test, y_test) - rmse(y_prediction_train, y_train)) <=5): 
+                st.write('**✅ Good Model**')
+            else:
+                st.write('**❌ Model Overfit**')
+
+            #Plotly.express
+            fig = px.scatter(df, x = y_prediction_test, y= y_test, labels=dict(x="y_prediction_test", y="y_test"))
+            st.write(fig)
+            st.write('---')
+
         st.write(f"Best Model: {best_model_name} with score: {best_model_score}")
+
+        st.subheader('Feature Importance')
+        # Get feature importances
+        importances = model.feature_importances_
+
+        # Sort the features by importance
+        sorted_indices = importances.argsort()[::-1]
+        sorted_features = X.columns[sorted_indices]
+        # Create a dataframe with the feature importances and sorted features
+        df = pd.DataFrame({
+            'Feature': sorted_features,
+            'Importance': importances[sorted_indices]
+        })
+        # Plot the feature importances using plotly.express
+        fig = px.bar(df, x='Feature', y='Importance', orientation='v')
+        fig.update_layout(xaxis_tickangle=-90)
+        st.plotly_chart(fig)
+
+
+      
+            
                         
 # def Open_AI(): 
     
