@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def main():
@@ -15,7 +16,7 @@ def main():
 
         # with st.echo():
             
-    st.title("CSV Data Selection")
+    st.markdown("## CSV Data Selection")
 
     # Upload CSV file
     uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
@@ -31,7 +32,13 @@ def main():
         # Display new DataFrame
         st.write("New DataFrame:")
         st.write(new_df)
-        
+        # Plotting histograms of each selected column
+        for column in selected_columns:
+            st.write(f"Histogram for {column}:")
+            fig, ax = plt.subplots()
+            new_df[column].plot(kind='hist', ax=ax)
+            st.pyplot(fig)
+            
             
 
 if __name__ == "__main__":
