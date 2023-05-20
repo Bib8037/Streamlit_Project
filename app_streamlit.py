@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
 
 
 def main():
@@ -34,6 +39,7 @@ def main():
         st.write(new_df)
 
         # Prepare subplots
+        st.write("Show Data Distribution:")
         fig, axs = plt.subplots(1, min(4, len(selected_columns)), figsize=(20, 5))  # Adjust figure size here
 
         # Plotting histograms of each selected column
@@ -43,7 +49,36 @@ def main():
 
         # Show the plot
         st.pyplot(fig)
-            
+
+        models = {
+        "Linear Regression": LinearRegression(),
+        "Decision Tree": DecisionTreeRegressor(),
+        "Random Forest": RandomForestRegressor(),
+}
+        # Select target variable
+        st.write("Develop Machine Learning Model :")
+        target = st.selectbox("Select target variable", new_df.columns)
+
+        X = new_df.drop(target, axis=1)
+        y = new_df[target]
+
+        # Split the data
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Train and evaluate models
+        st.write("Model Evaluation:")
+        best_model_name = ""
+        best_model_score = 0.0
+        for name, model in models.items():
+            model.fit(X_train, y_train)
+            cv_score = cross_val_score(model, X_train, y_train, cv=5).mean()
+            st.write(f"{name} cross-validation score: {cv_score}")
+            if cv_score > best_model_score:
+                best_model_name = name
+                best_model_score = cv_score
+
+        st.write(f"Best Model: {best_model_name} with score: {best_model_score}")
+                
             
 
 if __name__ == "__main__":
