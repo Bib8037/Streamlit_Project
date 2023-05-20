@@ -40,12 +40,34 @@ def main():
 
         # Prepare subplots
         st.write("Show Data Distribution:")
-        fig, axs = plt.subplots(1, min(4, len(selected_columns)), figsize=(20, 5))  # Adjust figure size here
+        # fig, axs = plt.subplots(1, min(4, len(selected_columns)), figsize=(20, 5))  # Adjust figure size here
+
+        # # Plotting histograms of each selected column
+        # for i, column in enumerate(selected_columns[:4]):  # Limiting to first 4 columns
+        #     axs[i].hist(new_df[column])
+        #     axs[i].set_title(f"Histogram for {column}")
+
+        # # Show the plot
+        # st.pyplot(fig)
+        # Determine the number of rows for the subplot grid
+        num_cols = len(selected_columns)
+        num_rows = num_cols // 4
+        if num_cols % 4: 
+            num_rows += 1  # Add an extra row if columns don't divide evenly by 4
+
+        # Prepare subplots
+        fig, axs = plt.subplots(num_rows, 4, figsize=(20, 5 * num_rows))  # Adjust figure size here
+        axs = axs.ravel()  # Flatten the array to iterate easily
 
         # Plotting histograms of each selected column
-        for i, column in enumerate(selected_columns[:4]):  # Limiting to first 4 columns
+        for i, column in enumerate(selected_columns):
             axs[i].hist(new_df[column])
             axs[i].set_title(f"Histogram for {column}")
+
+        # If less than num_rows*4 plots, remove the empty subplots
+        if num_cols < num_rows * 4:
+            for i in range(num_cols, num_rows * 4):
+                fig.delaxes(axs[i])
 
         # Show the plot
         st.pyplot(fig)
