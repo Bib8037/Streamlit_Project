@@ -39,7 +39,7 @@ def main():
         st.write("New DataFrame:")
         st.write(new_df)
 
-        if new_df:
+        if new_df != None:
             # Prepare subplots
             st.write("Show Data Distribution:")
             # fig, axs = plt.subplots(1, min(4, len(selected_columns)), figsize=(20, 5))  # Adjust figure size here
