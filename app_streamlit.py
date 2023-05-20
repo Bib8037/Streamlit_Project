@@ -45,7 +45,7 @@ def Auto_ML():
     split_size = st.sidebar.slider('Data split ratio (% forTraining Set)',10,90,80,5)
     seed_number = st.sidebar.slider('Set the random seed number', 1, 100, 70, 1)
                 
-    st.markdown("## CSV Data Selection")
+    st.markdown("## 1. CSV Data Uploading")
 
     # Upload CSV file
     uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
@@ -59,9 +59,10 @@ def Auto_ML():
         new_df = df[selected_columns]
 
         # Display new DataFrame
-        st.write("New DataFrame:")
+        st.markdown("## 2. Selected DataFrame:")
         st.write(new_df)
-
+        st.write('---')
+        st.markdown("## 3. Filter/clearn data")
         modify = st.checkbox("Add filters")
 
         def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
@@ -139,7 +140,8 @@ def Auto_ML():
         new_df = filter_dataframe(new_df)
         
         # Prepare subplots
-        st.write("Show Data Distribution:")
+        st.write('---')
+        st.markdown("## 4. Check Data Distribution:")
         # fig, axs = plt.subplots(1, min(4, len(selected_columns)), figsize=(20, 5))  # Adjust figure size here
 
         # # Plotting histograms of each selected column
@@ -196,10 +198,13 @@ def Auto_ML():
                 fig.delaxes(axs[i])
 
         # Show the plot
+        st.write('---')
+        st.markdown("## 5. Check Data Correlation:")
         st.pyplot(fig)
+        st.write('---')
 
         #HeatMap correlation
-        st.write('Intercorrelation Matrix Heatmap')
+        st.markdown("## 6. Check Intercorrelation Matrix Heatmap")
         corr = new_df.corr()
         mask = np.zeros_like(corr)
         mask[np.triu_indices_from(mask)] = True
@@ -247,7 +252,7 @@ def Auto_ML():
         ]
         
         # Select target variable
-        st.write("Develop Machine Learning Model :")
+        st.markdown("## 7. Develop Machine Learning Model :")
         target = st.selectbox("Select target variable", new_df.columns)
 
         X = new_df.drop(target, axis=1)
@@ -259,7 +264,8 @@ def Auto_ML():
         X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=test_size,random_state= seed_number)
 
         # Train and evaluate models
-        st.write("Model Evaluation:")
+        st.write('---')
+        st.markdown("## 8. Model Evaluation:")
         best_model_name = ""
         best_model_score = 0.0
 
@@ -332,7 +338,7 @@ def Auto_ML():
 
         st.write(f"Best Model: {best_model_name} with score: {best_model_score}")
 
-        st.subheader('Feature Importance')
+        st.markdown("## 9. Feature Importance")
         # Get feature importances
         importances = model.feature_importances_
 
