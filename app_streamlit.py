@@ -32,12 +32,17 @@ def main():
         # Display new DataFrame
         st.write("New DataFrame:")
         st.write(new_df)
+
+        # Prepare subplots
+        fig, axs = plt.subplots(1, min(4, len(selected_columns)), figsize=(20, 5))  # Adjust figure size here
+
         # Plotting histograms of each selected column
-        for column in selected_columns:
-            st.write(f"Histogram for {column}:")
-            fig, ax = plt.subplots()
-            new_df[column].plot(kind='hist', ax=ax)
-            st.pyplot(fig)
+        for i, column in enumerate(selected_columns[:4]):  # Limiting to first 4 columns
+            axs[i].hist(new_df[column])
+            axs[i].set_title(f"Histogram for {column}")
+
+        # Show the plot
+        st.pyplot(fig)
             
             
 
