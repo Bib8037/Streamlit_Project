@@ -439,7 +439,7 @@ def Open_AI():
     # st.title("🤖 Chat Bot with 🧠")
     # st.subheader(" Powered by 🦜 LangChain + OpenAI + Streamlit")
     #input text
-    st.text_input("Your question to ChatGPT about furnace ", key="question")
+    st.text_input("Your question to ChatGPT ", key="question")
     question = st.session_state.question
 
     prompt = f"""<|im_start|>systemAssistant is a highly intelligent chatbot designed to help users answer heater technical questions. 
@@ -463,7 +463,7 @@ def Open_AI():
     presence_penalty=0,
     stop=["<|im_end|>"])
 
-    st.subheader("Your anwser from ChatGPT (engine :"+str(response.engine)+") about furnace : ")
+    st.subheader("Your anwser from ChatGPT  : ")
     st.write(response['choices'][0]['text'])
         # You can access the value at any point with:
     
