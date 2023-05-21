@@ -13,7 +13,7 @@ from sklearn.metrics import mean_absolute_error as mae
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 import itertools
-# import openai
+import openai
 from pandas.api.types import (
     is_categorical_dtype,
     is_datetime64_any_dtype,
@@ -371,12 +371,12 @@ def Open_AI():
     st.title("AI Assistant : openAI + Streamlit 😎")
     st.markdown("## This is streamlit project connect to OpenAI")
     
-    """
-    This is a Python script that serves as a frontend for a conversational AI model built with the `langchain` and `llms` libraries.
-    The code creates a web application using Streamlit, a Python library for building interactive web apps.
-    # Author: Avratanu Biswas
-    # Date: March 11, 2023
-    """
+    # """
+    # This is a Python script that serves as a frontend for a conversational AI model built with the `langchain` and `llms` libraries.
+    # The code creates a web application using Streamlit, a Python library for building interactive web apps.
+    # # Author: Avratanu Biswas
+    # # Date: March 11, 2023
+    # """
 
     # Import necessary libraries
     
@@ -384,124 +384,149 @@ def Open_AI():
     # Set Streamlit page configuration
     # st.set_page_config(page_title='🧠MemoryBot🤖', layout='wide')
     # Initialize session states
-    if "generated" not in st.session_state:
-        st.session_state["generated"] = []
-    if "past" not in st.session_state:
-        st.session_state["past"] = []
-    if "input" not in st.session_state:
-        st.session_state["input"] = ""
-    if "stored_session" not in st.session_state:
-        st.session_state["stored_session"] = []
+    # if "generated" not in st.session_state:
+    #     st.session_state["generated"] = []
+    # if "past" not in st.session_state:
+    #     st.session_state["past"] = []
+    # if "input" not in st.session_state:
+    #     st.session_state["input"] = ""
+    # if "stored_session" not in st.session_state:
+    #     st.session_state["stored_session"] = []
 
-    # Define function to get user input
-    def get_text():
-        """
-        Get the user input text.
+    # # Define function to get user input
+    # def get_text():
+    #     """
+    #     Get the user input text.
 
-        Returns:
-            (str): The text entered by the user
-        """
-        input_text = st.text_input("You: ", st.session_state["input"], key="input",
-                                placeholder="Your AI assistant here! Ask me anything ...", 
-                                label_visibility='hidden')
-        return input_text
+    #     Returns:
+    #         (str): The text entered by the user
+    #     """
+    #     input_text = st.text_input("You: ", st.session_state["input"], key="input",
+    #                             placeholder="Your AI assistant here! Ask me anything ...", 
+    #                             label_visibility='hidden')
+    #     return input_text
 
-    # Define function to start a new chat
-    def new_chat():
-        """
-        Clears session state and starts a new chat.
-        """
-        save = []
-        for i in range(len(st.session_state['generated'])-1, -1, -1):
-            save.append("User:" + st.session_state["past"][i])
-            save.append("Bot:" + st.session_state["generated"][i])        
-        st.session_state["stored_session"].append(save)
-        st.session_state["generated"] = []
-        st.session_state["past"] = []
-        st.session_state["input"] = ""
-        st.session_state.entity_memory.entity_store = {}
-        st.session_state.entity_memory.buffer.clear()
+    # # Define function to start a new chat
+    # def new_chat():
+    #     """
+    #     Clears session state and starts a new chat.
+    #     """
+    #     save = []
+    #     for i in range(len(st.session_state['generated'])-1, -1, -1):
+    #         save.append("User:" + st.session_state["past"][i])
+    #         save.append("Bot:" + st.session_state["generated"][i])        
+    #     st.session_state["stored_session"].append(save)
+    #     st.session_state["generated"] = []
+    #     st.session_state["past"] = []
+    #     st.session_state["input"] = ""
+    #     st.session_state.entity_memory.entity_store = {}
+    #     st.session_state.entity_memory.buffer.clear()
 
-    # Set up sidebar with various options
-    with st.sidebar.expander("🛠️ ", expanded=False):
-        # Option to preview memory store
-        if st.checkbox("Preview memory store"):
-            with st.expander("Memory-Store", expanded=False):
-                st.session_state.entity_memory.store
-        # Option to preview memory buffer
-        if st.checkbox("Preview memory buffer"):
-            with st.expander("Bufffer-Store", expanded=False):
-                st.session_state.entity_memory.buffer
-        MODEL = st.selectbox(label='Model', options=['gpt-3.5-turbo','text-davinci-003','text-davinci-002','code-davinci-002'])
-        K = st.number_input(' (#)Summary of prompts to consider',min_value=3,max_value=1000)
+    # # Set up sidebar with various options
+    # with st.sidebar.expander("🛠️ ", expanded=False):
+    #     # Option to preview memory store
+    #     if st.checkbox("Preview memory store"):
+    #         with st.expander("Memory-Store", expanded=False):
+    #             st.session_state.entity_memory.store
+    #     # Option to preview memory buffer
+    #     if st.checkbox("Preview memory buffer"):
+    #         with st.expander("Bufffer-Store", expanded=False):
+    #             st.session_state.entity_memory.buffer
+    #     MODEL = st.selectbox(label='Model', options=['gpt-3.5-turbo','text-davinci-003','text-davinci-002','code-davinci-002'])
+    #     K = st.number_input(' (#)Summary of prompts to consider',min_value=3,max_value=1000)
 
-    # Set up the Streamlit app layout
-    st.title("🤖 Chat Bot with 🧠")
-    st.subheader(" Powered by 🦜 LangChain + OpenAI + Streamlit")
+    # # Set up the Streamlit app layout
+    # st.title("🤖 Chat Bot with 🧠")
+    # st.subheader(" Powered by 🦜 LangChain + OpenAI + Streamlit")
 
     # Ask the user to enter their OpenAI API key
     API_O = st.sidebar.text_input("API-KEY", type="password")
+    question = st.session_state.question
+    openai.api_type = "azure"
+    openai.api_base = "https://chem-dm-openai-dev01.openai.azure.com/"
+    openai.api_version = "2022-12-01"
+    openai.api_key = API_O
+    
+    #input text
+    st.text_input("Your question to ChatGPT about furnace ", key="question")
+    question = st.session_state.question
+    prompt = question
 
-    # Session state storage would be ideal
-    if API_O:
-        # Create an OpenAI instance
-        llm = OpenAI(temperature=0,
-                    openai_api_key=API_O, 
-                    model_name=MODEL, 
-                    verbose=False) 
+    response = openai.Completion.create(
+    engine="gpt-35",#"davinci-003",
+    prompt=prompt,
+    temperature=1,
+    max_tokens=800,
+    top_p=0.95,
+    frequency_penalty=0,
+    presence_penalty=0,
+    stop=["<|im_end|>"])
+
+    st.subheader("Your anwser from ChatGPT (engine :"+str(response.engine)+") about furnace : ")
+    st.write(response['choices'][0]['text'])
+        # You can access the value at any point with:
+    
+
+    # # Session state storage would be ideal
+    # if API_O:
+    #     # Create an OpenAI instance
+    #     llm = OpenAI(temperature=0,
+    #                 openai_api_key=API_O, 
+    #                 model_name=MODEL, 
+    #                 verbose=False) 
 
 
-        # Create a ConversationEntityMemory object if not already created
-        if 'entity_memory' not in st.session_state:
-                st.session_state.entity_memory = ConversationEntityMemory(llm=llm, k=K )
+    #     # Create a ConversationEntityMemory object if not already created
+    #     if 'entity_memory' not in st.session_state:
+    #             st.session_state.entity_memory = ConversationEntityMemory(llm=llm, k=K )
             
-            # Create the ConversationChain object with the specified configuration
-        Conversation = ConversationChain(
-                llm=llm, 
-                prompt=ENTITY_MEMORY_CONVERSATION_TEMPLATE,
-                memory=st.session_state.entity_memory
-            )  
-    else:
-        st.sidebar.warning('API key required to try this app.The API key is not stored in any form.')
-        # st.stop()
+    #         # Create the ConversationChain object with the specified configuration
+    #     Conversation = ConversationChain(
+    #             llm=llm, 
+    #             prompt=ENTITY_MEMORY_CONVERSATION_TEMPLATE,
+    #             memory=st.session_state.entity_memory
+    #         )  
+    # else:
+    #     st.sidebar.warning('API key required to try this app.The API key is not stored in any form.')
+    #     # st.stop()
 
 
-    # Add a button to start a new chat
-    st.sidebar.button("New Chat", on_click = new_chat, type='primary')
+    # # Add a button to start a new chat
+    # st.sidebar.button("New Chat", on_click = new_chat, type='primary')
 
-    # Get the user input
-    user_input = get_text()
+    # # Get the user input
+    # user_input = get_text()
 
-    # Generate the output using the ConversationChain object and the user input, and add the input/output to the session
-    if user_input:
-        output = Conversation.run(input=user_input)  
-        st.session_state.past.append(user_input)  
-        st.session_state.generated.append(output)  
+    # # Generate the output using the ConversationChain object and the user input, and add the input/output to the session
+    # if user_input:
+    #     output = Conversation.run(input=user_input)  
+    #     st.session_state.past.append(user_input)  
+    #     st.session_state.generated.append(output)  
 
-    # Allow to download as well
-    download_str = []
-    # Display the conversation history using an expander, and allow the user to download it
-    with st.expander("Conversation", expanded=True):
-        for i in range(len(st.session_state['generated'])-1, -1, -1):
-            st.info(st.session_state["past"][i],icon="🧐")
-            st.success(st.session_state["generated"][i], icon="🤖")
-            download_str.append(st.session_state["past"][i])
-            download_str.append(st.session_state["generated"][i])
+    # # Allow to download as well
+    # download_str = []
+    # # Display the conversation history using an expander, and allow the user to download it
+    # with st.expander("Conversation", expanded=True):
+    #     for i in range(len(st.session_state['generated'])-1, -1, -1):
+    #         st.info(st.session_state["past"][i],icon="🧐")
+    #         st.success(st.session_state["generated"][i], icon="🤖")
+    #         download_str.append(st.session_state["past"][i])
+    #         download_str.append(st.session_state["generated"][i])
         
-        # Can throw error - requires fix
-        download_str = '\n'.join(download_str)
-        if download_str:
-            st.download_button('Download',download_str)
+    #     # Can throw error - requires fix
+    #     download_str = '\n'.join(download_str)
+    #     if download_str:
+    #         st.download_button('Download',download_str)
 
-    # Display stored conversation sessions in the sidebar
-    for i, sublist in enumerate(st.session_state.stored_session):
-            with st.sidebar.expander(label= f"Conversation-Session:{i}"):
-                st.write(sublist)
+    # # Display stored conversation sessions in the sidebar
+    # for i, sublist in enumerate(st.session_state.stored_session):
+    #         with st.sidebar.expander(label= f"Conversation-Session:{i}"):
+    #             st.write(sublist)
 
-    # Allow the user to clear all stored conversation sessions
-    if st.session_state.stored_session:   
-        if st.sidebar.checkbox("Clear-all"):
-            del st.session_state.stored_session
+    # # Allow the user to clear all stored conversation sessions
+    # if st.session_state.stored_session:   
+    #     if st.sidebar.checkbox("Clear-all"):
+    #         del st.session_state.stored_session
         
     #     st.title("Hello World 😎 ")
     #     st.markdown("## This is streamlit project to help summarize content")
