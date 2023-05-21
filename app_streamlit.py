@@ -441,7 +441,7 @@ def Open_AI():
     #input text
     st.text_input("Your question to ChatGPT about furnace ", key="question")
     question = st.session_state.question
-    prompt = question
+    prompt = f"""Your task is to help answer '''{question}'''"""
 
     # Ask the user to enter their OpenAI API key
     API_O = st.sidebar.text_input("API-KEY", type="password")
