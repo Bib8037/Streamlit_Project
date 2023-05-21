@@ -8,7 +8,7 @@ plotly
 langchain
 openai
 datetime
-gtts
-pygame
-tempfile
-pydub
+# gtts
+# pygame
+# tempfile
+# pydub
