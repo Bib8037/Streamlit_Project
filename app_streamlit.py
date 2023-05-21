@@ -475,19 +475,19 @@ def Open_AI():
 
     mytext = "Based on your question" + str(question) +response['choices'][0]['text']
     
-    # Convert text to speech
-    if st.button('Convert to Speech'):
-        myobj = gTTS(text=mytext, lang='en', slow=False)
+    # # Convert text to speech
+    # if st.button('Convert to Speech'):
+    #     myobj = gTTS(text=mytext, lang='en', slow=False)
 
-        # Save the audio to a file
-        with NamedTemporaryFile(delete=False, suffix=".mp3") as f:
-            temp_file_name = f.name
-        myobj.save(temp_file_name)
+    #     # Save the audio to a file
+    #     with NamedTemporaryFile(delete=False, suffix=".mp3") as f:
+    #         temp_file_name = f.name
+    #     myobj.save(temp_file_name)
 
-        # Create an audio player for the audio file
-        audio_file = open(temp_file_name, 'rb')
-        audio_bytes = audio_file.read()
-        st.audio(audio_bytes, format='audio/mp3')# # language in which you want to convert
+    #     # Create an audio player for the audio file
+    #     audio_file = open(temp_file_name, 'rb')
+    #     audio_bytes = audio_file.read()
+    #     st.audio(audio_bytes, format='audio/mp3')# # language in which you want to convert
         # language = 'en'
 
     # myobj = gTTS(text=mytext, lang='en', tld='us' , slow=False)
