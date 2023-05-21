@@ -1,4 +1,4 @@
-streamlit==23.1.2
+streamlit
 pandas
 matplotlib
 scikit-learn
@@ -7,6 +7,6 @@ seaborn
 plotly
 openai
 gtts
-streamlit_chat
-utils
-python-dotenv==0.19.0
+# streamlit_chat
+# utils
+# python-dotenv
