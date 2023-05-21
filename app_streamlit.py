@@ -474,18 +474,18 @@ def Open_AI():
     st.write(response['choices'][0]['text'])
 
     mytext = "Based on your question" + str(question) +response['choices'][0]['text']
-    # language in which you want to convert
-    language = 'en'
+    # # language in which you want to convert
+    # language = 'en'
 
-    myobj = gTTS(text=mytext, lang='en', tld='us' , slow=False)
+    # myobj = gTTS(text=mytext, lang='en', tld='us' , slow=False)
 
-    # Saving the converted audio in a bytes buffer
-    sound_io = io.BytesIO()
-    myobj.save(sound_io)
-    sound_io.seek(0)
+    # # Saving the converted audio in a bytes buffer
+    # sound_io = io.BytesIO()
+    # myobj.save(sound_io)
+    # sound_io.seek(0)
 
-    sound = AudioSegment.from_file(sound_io, format="mp3")
-    play(sound)
+    # sound = AudioSegment.from_file(sound_io, format="mp3")
+    # play(sound)
     #     # Create a ConversationEntityMemory object if not already created
     #     if 'entity_memory' not in st.session_state:
     #             st.session_state.entity_memory = ConversationEntityMemory(llm=llm, k=K )
