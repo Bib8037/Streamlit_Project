@@ -29,6 +29,7 @@ from langchain.chains import ConversationChain
 from langchain.chains.conversation.memory import ConversationEntityMemory
 from langchain.chains.conversation.prompt import ENTITY_MEMORY_CONVERSATION_TEMPLATE
 from langchain.llms import OpenAI
+from datetime import datetime
 
 
 
@@ -465,17 +466,35 @@ def Open_AI():
 
     st.subheader("Your anwser from ChatGPT  : ")
     st.write(response['choices'][0]['text'])
-        # You can access the value at any point with:
-    
 
-    # # Session state storage would be ideal
-    # if API_O:
-    #     # Create an OpenAI instance
-    #     llm = OpenAI(temperature=0,
-    #                 openai_api_key=API_O, 
-    #                 model_name=MODEL, 
-    #                 verbose=False) 
+    mytext = "Based on your question" + str(question) +response['choices'][0]['text']
+    # Get the current date and time
+    now = datetime.now()
+    # Format the date and time for filename
+    formatted_now = now.strftime("%Y-%m-%d_%H-%M-%S")
 
+    # language in which you want to convert
+    language = 'en'
+
+    # Passing the text and language to the engine, 
+    # here we have marked slow=False which tells the module that the converted audio should have a high speed
+    ###myobj = gTTS(text=mytext, lang=language, slow=False)
+    myobj = gTTS(text=mytext, lang='en', tld='us' , slow=False)
+
+    # Saving the converted audio in a mp3 file named 'welcome'
+    myobj.save(f"voice/texttospeech01_{formatted_now}.mp3")
+
+    # Load the mp3 file
+    mixer.init()
+    mixer.music.load(f"voice/texttospeech01_{formatted_now}.mp3")
+
+    # Play the mp3 file
+    mixer.music.play()
+
+    import time
+    while mixer.music.get_busy(): 
+        # check if the file is playing
+        time.sleep(1) # wait for 1 second
 
     #     # Create a ConversationEntityMemory object if not already created
     #     if 'entity_memory' not in st.session_state:
