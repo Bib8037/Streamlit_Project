@@ -5,8 +5,5 @@ scikit-learn
 numpy
 seaborn
 plotly
-langchain
 openai
-datetime
 gtts
-# tempfile

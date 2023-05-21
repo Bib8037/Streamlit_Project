@@ -25,17 +25,13 @@ import seaborn as sns
 import plotly.express as px
 # import shap
 import streamlit as st
-from langchain.chains import ConversationChain
-from langchain.chains.conversation.memory import ConversationEntityMemory
-from langchain.chains.conversation.prompt import ENTITY_MEMORY_CONVERSATION_TEMPLATE
-from langchain.llms import OpenAI
+# from langchain.chains import ConversationChain
+# from langchain.chains.conversation.memory import ConversationEntityMemory
+# from langchain.chains.conversation.prompt import ENTITY_MEMORY_CONVERSATION_TEMPLATE
+# from langchain.llms import OpenAI
 from datetime import datetime
 from gtts import gTTS
-# from pygame import mixer  # Added line
-from tempfile import NamedTemporaryFile
-# from pydub import AudioSegment
-# from pydub.playback import play
-# import io
+import os
 
 
 
@@ -377,79 +373,12 @@ def Open_AI():
     # st.title("Hello World  ")
     st.title("AI Assistant : openAI + Streamlit 😎")
     st.markdown("## This is streamlit project connect to OpenAI")
-    
-    # """
-    # This is a Python script that serves as a frontend for a conversational AI model built with the `langchain` and `llms` libraries.
-    # The code creates a web application using Streamlit, a Python library for building interactive web apps.
-    # # Author: Avratanu Biswas
-    # # Date: March 11, 2023
-    # """
+    MODEL = st.selectbox(label='Model', options=['gpt-35','davinci-003'])
 
-    # Import necessary libraries
-    
-
-    # Set Streamlit page configuration
-    # st.set_page_config(page_title='🧠MemoryBot🤖', layout='wide')
-    # Initialize session states
-    # if "generated" not in st.session_state:
-    #     st.session_state["generated"] = []
-    # if "past" not in st.session_state:
-    #     st.session_state["past"] = []
-    # if "input" not in st.session_state:
-    #     st.session_state["input"] = ""
-    # if "stored_session" not in st.session_state:
-    #     st.session_state["stored_session"] = []
-
-    # # Define function to get user input
-    # def get_text():
-    #     """
-    #     Get the user input text.
-
-    #     Returns:
-    #         (str): The text entered by the user
-    #     """
-    #     input_text = st.text_input("You: ", st.session_state["input"], key="input",
-    #                             placeholder="Your AI assistant here! Ask me anything ...", 
-    #                             label_visibility='hidden')
-    #     return input_text
-
-    # # Define function to start a new chat
-    # def new_chat():
-    #     """
-    #     Clears session state and starts a new chat.
-    #     """
-    #     save = []
-    #     for i in range(len(st.session_state['generated'])-1, -1, -1):
-    #         save.append("User:" + st.session_state["past"][i])
-    #         save.append("Bot:" + st.session_state["generated"][i])        
-    #     st.session_state["stored_session"].append(save)
-    #     st.session_state["generated"] = []
-    #     st.session_state["past"] = []
-    #     st.session_state["input"] = ""
-    #     st.session_state.entity_memory.entity_store = {}
-    #     st.session_state.entity_memory.buffer.clear()
-
-    # # Set up sidebar with various options
-    # with st.sidebar.expander("🛠️ ", expanded=False):
-    #     # Option to preview memory store
-    #     if st.checkbox("Preview memory store"):
-    #         with st.expander("Memory-Store", expanded=False):
-    #             st.session_state.entity_memory.store
-    #     # Option to preview memory buffer
-    #     if st.checkbox("Preview memory buffer"):
-    #         with st.expander("Bufffer-Store", expanded=False):
-    #             st.session_state.entity_memory.buffer
-    #     MODEL = st.selectbox(label='Model', options=['gpt-3.5-turbo','text-davinci-003','text-davinci-002','code-davinci-002'])
-    #     K = st.number_input(' (#)Summary of prompts to consider',min_value=3,max_value=1000)
-
-    # # Set up the Streamlit app layout
-    # st.title("🤖 Chat Bot with 🧠")
-    # st.subheader(" Powered by 🦜 LangChain + OpenAI + Streamlit")
-    #input text
     st.text_input("Your question to ChatGPT ", key="question")
     question = st.session_state.question
 
-    prompt = f"""<|im_start|>systemAssistant is a highly intelligent chatbot designed to help users answer heater technical questions. 
+    prompt = f"""<|im_start|>systemAssistant is a highly intelligent chatbot designed to help users answer process engineering technical questions. 
     <|im_end|><|im_start|>user{question}
     <|im_end|><|im_start|>assistant"""
     # Ask the user to enter their OpenAI API key
@@ -461,7 +390,7 @@ def Open_AI():
 
 
     response = openai.Completion.create(
-    engine="gpt-35",#"davinci-003",
+    engine= MODEL,
     prompt=prompt,
     temperature=1,
     max_tokens=800,
@@ -474,113 +403,25 @@ def Open_AI():
     st.write(response['choices'][0]['text'])
 
     mytext = "Based on your question" + str(question) +response['choices'][0]['text']
+    filename = "temp_speech.mp3"
+    if st.button('Convert to Speech'):
+        # Create speech
+        speech = gTTS(text=mytext, lang='en', slow=False)
+        
+        # Save it to a file
+        speech.save(filename)
+        
+        # Open the file and read the data
+        with open(filename, 'rb') as audio_file:
+            audio_bytes = audio_file.read()
+        
+        # Play audio
+        st.audio(audio_bytes, format='audio/mp3')
+        
+        # Delete the file
+        os.remove(filename)
     
-    # # Convert text to speech
-    # if st.button('Convert to Speech'):
-    #     myobj = gTTS(text=mytext, lang='en', slow=False)
-
-    #     # Save the audio to a file
-    #     with NamedTemporaryFile(delete=False, suffix=".mp3") as f:
-    #         temp_file_name = f.name
-    #     myobj.save(temp_file_name)
-
-    #     # Create an audio player for the audio file
-    #     audio_file = open(temp_file_name, 'rb')
-    #     audio_bytes = audio_file.read()
-    #     st.audio(audio_bytes, format='audio/mp3')# # language in which you want to convert
-        # language = 'en'
-
-    # myobj = gTTS(text=mytext, lang='en', tld='us' , slow=False)
-
-    # # Saving the converted audio in a bytes buffer
-    # sound_io = io.BytesIO()
-    # myobj.save(sound_io)
-    # sound_io.seek(0)
-
-    # sound = AudioSegment.from_file(sound_io, format="mp3")
-    # play(sound)
-    #     # Create a ConversationEntityMemory object if not already created
-    #     if 'entity_memory' not in st.session_state:
-    #             st.session_state.entity_memory = ConversationEntityMemory(llm=llm, k=K )
-            
-    #         # Create the ConversationChain object with the specified configuration
-    #     Conversation = ConversationChain(
-    #             llm=llm, 
-    #             prompt=ENTITY_MEMORY_CONVERSATION_TEMPLATE,
-    #             memory=st.session_state.entity_memory
-    #         )  
-    # else:
-    #     st.sidebar.warning('API key required to try this app.The API key is not stored in any form.')
-    #     # st.stop()
-
-
-    # # Add a button to start a new chat
-    # st.sidebar.button("New Chat", on_click = new_chat, type='primary')
-
-    # # Get the user input
-    # user_input = get_text()
-
-    # # Generate the output using the ConversationChain object and the user input, and add the input/output to the session
-    # if user_input:
-    #     output = Conversation.run(input=user_input)  
-    #     st.session_state.past.append(user_input)  
-    #     st.session_state.generated.append(output)  
-
-    # # Allow to download as well
-    # download_str = []
-    # # Display the conversation history using an expander, and allow the user to download it
-    # with st.expander("Conversation", expanded=True):
-    #     for i in range(len(st.session_state['generated'])-1, -1, -1):
-    #         st.info(st.session_state["past"][i],icon="🧐")
-    #         st.success(st.session_state["generated"][i], icon="🤖")
-    #         download_str.append(st.session_state["past"][i])
-    #         download_str.append(st.session_state["generated"][i])
-        
-    #     # Can throw error - requires fix
-    #     download_str = '\n'.join(download_str)
-    #     if download_str:
-    #         st.download_button('Download',download_str)
-
-    # # Display stored conversation sessions in the sidebar
-    # for i, sublist in enumerate(st.session_state.stored_session):
-    #         with st.sidebar.expander(label= f"Conversation-Session:{i}"):
-    #             st.write(sublist)
-
-    # # Allow the user to clear all stored conversation sessions
-    # if st.session_state.stored_session:   
-    #     if st.sidebar.checkbox("Clear-all"):
-    #         del st.session_state.stored_session
-        
-    #     st.title("Hello World 😎 ")
-    #     st.markdown("## This is streamlit project to help summarize content")
-    #     st.title("AI Assistant : openAI + Streamlit")
-    #     prompt = st.text_input("Enter your message:", key='prompt')
-    #     api_secret = "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"
-    #     openai.api_key = api_secret#st.secrets[api_secret]
-
-    #     # This function uses the Ope"nAI Completion API to generate a 
-    #     # response based on the given prompt. The temperature parameter controls 
-    #     # the randomness of the generated response. A higher temperature will result 
-    #     # in more random responses, 
-    #     # while a lower temperature will result in more predictable responses.
-
-    #     def generate_response(prompt):
-    #         completions = openai.Completion.create (
-    #             engine="text-davinci-003",
-    #             prompt=prompt,
-    #             max_tokens=1024,
-    #             n=1,
-    #             stop=None,
-    #             temperature=0.5,
-    #         )
-
-    #         message = completions.choices[0].text
-    #         return message
-
-        
-    #     if st.button("Submit", key='submit'):
-    #         response = generate_response(prompt)
-    #         st.success(response)
+    
     
 
 if __name__ == "__main__":
