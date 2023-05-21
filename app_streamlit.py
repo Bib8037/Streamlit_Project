@@ -432,60 +432,60 @@ def Open_AI():
 # def Open_AI_Conversation(): 
    
 
-    # API_O = st.sidebar.text_input("API-KEY", type="password")
-    # openai.api_type = "azure"
-    # openai.api_base = "https://chem-dm-openai-dev01.openai.azure.com/"
-    # openai.api_version = "2023-03-15-preview"
-    # openai.api_key = API_O
+#     API_O = st.sidebar.text_input("API-KEY", type="password")
+#     openai.api_type = "azure"
+#     openai.api_base = "https://chem-dm-openai-dev01.openai.azure.com/"
+#     openai.api_version = "2023-03-15-preview"
+#     openai.api_key = API_O
 
 
 
-    # st.title("Chatbot : ChatGPT and Streamlit Chat")
-    # st.subheader("AI Tutor:")
+#     st.title("Chatbot : ChatGPT and Streamlit Chat")
+#     st.subheader("AI Tutor:")
 
-    # engine = st.selectbox(
-    #     "Select a model",
-    #     ('gpt-35', 'davinci-003')
-    # )
+#     engine = st.selectbox(
+#         "Select a model",
+#         ('gpt-35', 'davinci-003')
+#     )
 
-    # messages = []  # Create an empty list to store the messages
+#     messages = []  # Create an empty list to store the messages
 
-    # if 'generated' not in st.session_state:
-    #     st.session_state['generated'] = []
-    # if 'past' not in st.session_state:
-    #     st.session_state['past'] = []
+#     if 'generated' not in st.session_state:
+#         st.session_state['generated'] = []
+#     if 'past' not in st.session_state:
+#         st.session_state['past'] = []
 
-    # query = st.text_input("Query: ", key="input")
+#     query = st.text_input("Query: ", key="input")
 
-    # if 'messages' not in st.session_state:
-    #     st.session_state['messages'] = get_initial_message()
+#     if 'messages' not in st.session_state:
+#         st.session_state['messages'] = get_initial_message()
     
-    # if query:
-    #     with st.spinner("generating..."):
-    #         messages = st.session_state['messages']
-    #         messages = update_chat(messages, "user", query)
-    #         # st.write("Before  making the API call")
-    #         # st.write(messages)
-    #         response = get_chatgpt_response(messages,engine)
-    #         messages = update_chat(messages, "assistant", response)
-    #         st.session_state.past.append(query)
-    #         st.session_state.generated.append(response)
+#     if query:
+#         with st.spinner("generating..."):
+#             messages = st.session_state['messages']
+#             messages = update_chat(messages, "user", query)
+#             # st.write("Before  making the API call")
+#             # st.write(messages)
+#             response = get_chatgpt_response(messages,engine)
+#             messages = update_chat(messages, "assistant", response)
+#             st.session_state.past.append(query)
+#             st.session_state.generated.append(response)
 
 
 
-    # if st.session_state['generated']:
-    #     messages = []  # Create an empty list to store the messages
+#     if st.session_state['generated']:
+#         messages = []  # Create an empty list to store the messages
 
-    #     for i in range(len(st.session_state['generated'])-1, -1, -1):
-    #         messages.append((st.session_state["generated"][i], False, str(i)))  # Add generated message to the list
-    #         messages.append((st.session_state['past'][i], True, str(i) + '_user'))  # Add past message to the list
+#         for i in range(len(st.session_state['generated'])-1, -1, -1):
+#             messages.append((st.session_state["generated"][i], False, str(i)))  # Add generated message to the list
+#             messages.append((st.session_state['past'][i], True, str(i) + '_user'))  # Add past message to the list
             
 
-    #     messages.reverse()  # Reverse the order of the messages
+#         messages.reverse()  # Reverse the order of the messages
 
-    # with st.expander("Show Messages", expanded=True):
-    #     for msg, is_user, key in messages:
-    #         message(msg, is_user=is_user, key=key)
+#     with st.expander("Show Messages", expanded=True):
+#         for msg, is_user, key in messages:
+#             message(msg, is_user=is_user, key=key)
 
 
 if __name__ == "__main__":
