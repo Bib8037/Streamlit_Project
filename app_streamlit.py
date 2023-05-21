@@ -375,12 +375,7 @@ def Auto_ML():
         fig.update_layout(xaxis_tickangle=-90)
         st.plotly_chart(fig)
 
-        
-
-
-      
-            
-                        
+                  
 def Open_AI(): 
     # st.title("Hello World  ")
     st.title("AI Assistant : openAI + Streamlit 😎")
@@ -492,10 +487,6 @@ def Open_AI_Conversation():
         for msg, is_user, key in messages:
             message(msg, is_user=is_user, key=key)
 
-
-    
-
-    
 
 if __name__ == "__main__":
 
