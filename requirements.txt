@@ -9,4 +9,4 @@ openai
 gtts
 streamlit_chat
 utils
-dotenv
+python-dotenv==0.19.0
