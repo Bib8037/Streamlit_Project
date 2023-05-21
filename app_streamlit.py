@@ -32,11 +32,11 @@ from gtts import gTTS
 # from dotenv import load_dotenv
 # import streamlit as st
 # import streamlit as st
-from streamlit_chat import message
-from utils import get_initial_message, get_chatgpt_response, update_chat
-import os
-from dotenv import load_dotenv
-load_dotenv()
+# from streamlit_chat import message
+# from utils import get_initial_message, get_chatgpt_response, update_chat
+# import os
+# from dotenv import load_dotenv
+# load_dotenv()
 import openai
 
 
