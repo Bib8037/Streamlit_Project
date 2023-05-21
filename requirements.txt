@@ -6,3 +6,4 @@ numpy
 seaborn
 plotly
 langchain
+openai
