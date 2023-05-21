@@ -7,3 +7,6 @@ seaborn
 plotly
 openai
 gtts
+streamlit_chat
+utils
+dotenv
