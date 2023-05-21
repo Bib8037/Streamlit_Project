@@ -31,8 +31,12 @@ from langchain.chains.conversation.prompt import ENTITY_MEMORY_CONVERSATION_TEMP
 from langchain.llms import OpenAI
 from datetime import datetime
 from gtts import gTTS
-from pygame import mixer  # Added line
+# from pygame import mixer  # Added line
 from tempfile import NamedTemporaryFile
+from pydub import AudioSegment
+from pydub.playback import play
+import io
+
 
 
 
@@ -470,35 +474,18 @@ def Open_AI():
     st.write(response['choices'][0]['text'])
 
     mytext = "Based on your question" + str(question) +response['choices'][0]['text']
-    # Get the current date and time
-    now = datetime.now()
-    # Format the date and time for filename
-    formatted_now = now.strftime("%Y-%m-%d_%H-%M-%S")
-
     # language in which you want to convert
     language = 'en'
 
-    # Passing the text and language to the engine, 
-    # here we have marked slow=False which tells the module that the converted audio should have a high speed
-    ###myobj = gTTS(text=mytext, lang=language, slow=False)
     myobj = gTTS(text=mytext, lang='en', tld='us' , slow=False)
 
-    # Saving the converted audio in a temporary mp3 file
-    temp_file = NamedTemporaryFile(delete=True)
-    myobj.save(temp_file.name)
+    # Saving the converted audio in a bytes buffer
+    sound_io = io.BytesIO()
+    myobj.save(sound_io)
+    sound_io.seek(0)
 
-    # Load the mp3 file
-    mixer.init()
-    mixer.music.load(temp_file.name)
-
-    # Play the mp3 file
-    mixer.music.play()
-
-    import time
-    while mixer.music.get_busy(): 
-        # check if the file is playing
-        time.sleep(1) # wait for 1 second
-
+    sound = AudioSegment.from_file(sound_io, format="mp3")
+    play(sound)
     #     # Create a ConversationEntityMemory object if not already created
     #     if 'entity_memory' not in st.session_state:
     #             st.session_state.entity_memory = ConversationEntityMemory(llm=llm, k=K )
