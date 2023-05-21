@@ -13,7 +13,7 @@ from sklearn.metrics import mean_absolute_error as mae
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 import itertools
-import openai
+
 from pandas.api.types import (
     is_categorical_dtype,
     is_datetime64_any_dtype,
@@ -25,13 +25,21 @@ import seaborn as sns
 import plotly.express as px
 # import shap
 import streamlit as st
-# from langchain.chains import ConversationChain
-# from langchain.chains.conversation.memory import ConversationEntityMemory
-# from langchain.chains.conversation.prompt import ENTITY_MEMORY_CONVERSATION_TEMPLATE
-# from langchain.llms import OpenAI
+
 from datetime import datetime
 from gtts import gTTS
+
+# from dotenv import load_dotenv
+# import streamlit as st
+# import streamlit as st
+from streamlit_chat import message
+from utils import get_initial_message, get_chatgpt_response, update_chat
 import os
+from dotenv import load_dotenv
+load_dotenv()
+import openai
+
+
 
 
 
@@ -146,6 +154,7 @@ def Auto_ML():
             return df
         
         new_df = filter_dataframe(new_df)
+        new_df = new_df.dropna()
         
         # Prepare subplots
         st.write('---')
@@ -160,6 +169,7 @@ def Auto_ML():
         # # Show the plot
         # st.pyplot(fig)
         # Determine the number of rows for the subplot grid
+        
         num_cols = len(selected_columns)
         num_rows = num_cols // 4
         if num_cols % 4: 
@@ -194,10 +204,16 @@ def Auto_ML():
         axs = axs.ravel()  # Flatten the array to iterate easily
 
         # Plotting scatter plots of each pair of selected columns
+        # Plotting scatter plots of each pair of selected columns
         i = 0
         for pair in itertools.combinations(selected_columns, 2):
             axs[i].scatter(new_df[pair[0]], new_df[pair[1]])
             axs[i].set_title(f"Scatter plot: {pair[0]} vs {pair[1]}")
+            
+            # Add x and y-axis labels
+            axs[i].set_xlabel(pair[0])
+            axs[i].set_ylabel(pair[1])
+
             i += 1
 
         # If less than num_rows*4 plots, remove the empty subplots
@@ -420,8 +436,69 @@ def Open_AI():
         
         # Delete the file
         os.remove(filename)
+
+
+def Open_AI_Conversation(): 
+   
+
+    API_O = st.sidebar.text_input("API-KEY", type="password")
+    openai.api_type = "azure"
+    openai.api_base = "https://chem-dm-openai-dev01.openai.azure.com/"
+    openai.api_version = "2023-03-15-preview"
+    openai.api_key = API_O
+
+
+
+    st.title("Chatbot : ChatGPT and Streamlit Chat")
+    st.subheader("AI Tutor:")
+
+    engine = st.selectbox(
+        "Select a model",
+        ('gpt-35', 'davinci-003')
+    )
+
+    messages = []  # Create an empty list to store the messages
+
+    if 'generated' not in st.session_state:
+        st.session_state['generated'] = []
+    if 'past' not in st.session_state:
+        st.session_state['past'] = []
+
+    query = st.text_input("Query: ", key="input")
+
+    if 'messages' not in st.session_state:
+        st.session_state['messages'] = get_initial_message()
     
+    if query:
+        with st.spinner("generating..."):
+            messages = st.session_state['messages']
+            messages = update_chat(messages, "user", query)
+            # st.write("Before  making the API call")
+            # st.write(messages)
+            response = get_chatgpt_response(messages,engine)
+            messages = update_chat(messages, "assistant", response)
+            st.session_state.past.append(query)
+            st.session_state.generated.append(response)
+
+
+
+    if st.session_state['generated']:
+        messages = []  # Create an empty list to store the messages
+
+        for i in range(len(st.session_state['generated'])-1, -1, -1):
+            messages.append((st.session_state["generated"][i], False, str(i)))  # Add generated message to the list
+            messages.append((st.session_state['past'][i], True, str(i) + '_user'))  # Add past message to the list
+            
+
+        messages.reverse()  # Reverse the order of the messages
+
+    with st.expander("Show Messages", expanded=True):
+        for msg, is_user, key in messages:
+            message(msg, is_user=is_user, key=key)
+
+
     
+
     
 
 if __name__ == "__main__":
@@ -429,7 +506,8 @@ if __name__ == "__main__":
 
     page_names_to_funcs = {
             "Auto Machine Learning": Auto_ML,
-            "Open AI Tools": Open_AI,
+            "Open AI 1 shot": Open_AI,
+            "Open AI multi shot": Open_AI_Conversation,
     }
     demo_name = st.sidebar.selectbox("Choose a demo", page_names_to_funcs.keys())
     page_names_to_funcs[demo_name]()
