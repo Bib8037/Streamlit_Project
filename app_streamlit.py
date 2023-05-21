@@ -40,10 +40,6 @@ load_dotenv()
 import openai
 
 
-
-
-
-
 def Auto_ML():
     st.title("Hello World 😎 ")
     st.markdown("## This is streamlit project to help develop Machine Learning")
