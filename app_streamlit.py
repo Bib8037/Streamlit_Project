@@ -32,7 +32,7 @@ from langchain.llms import OpenAI
 from datetime import datetime
 from gtts import gTTS
 from pygame import mixer  # Added line
-
+from tempfile import NamedTemporaryFile
 
 
 
@@ -483,12 +483,13 @@ def Open_AI():
     ###myobj = gTTS(text=mytext, lang=language, slow=False)
     myobj = gTTS(text=mytext, lang='en', tld='us' , slow=False)
 
-    # Saving the converted audio in a mp3 file named 'welcome'
-    myobj.save(f"voice/texttospeech01_{formatted_now}.mp3")
+    # Saving the converted audio in a temporary mp3 file
+    temp_file = NamedTemporaryFile(delete=True)
+    myobj.save(temp_file.name)
 
     # Load the mp3 file
     mixer.init()
-    mixer.music.load(f"voice/texttospeech01_{formatted_now}.mp3")
+    mixer.music.load(temp_file.name)
 
     # Play the mp3 file
     mixer.music.play()
