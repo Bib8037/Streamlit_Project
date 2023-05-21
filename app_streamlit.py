@@ -438,10 +438,12 @@ def Open_AI():
     # # Set up the Streamlit app layout
     # st.title("🤖 Chat Bot with 🧠")
     # st.subheader(" Powered by 🦜 LangChain + OpenAI + Streamlit")
-
+    #input text
+    st.text_input("Your question to ChatGPT about furnace ", key="question")
+    question = st.session_state.question
+    
     # Ask the user to enter their OpenAI API key
     API_O = st.sidebar.text_input("API-KEY", type="password")
-    question = st.session_state.question
     openai.api_type = "azure"
     openai.api_base = "https://chem-dm-openai-dev01.openai.azure.com/"
     openai.api_version = "2022-12-01"
