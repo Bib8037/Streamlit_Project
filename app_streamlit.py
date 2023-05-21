@@ -367,6 +367,10 @@ def Auto_ML():
             
                         
 def Open_AI(): 
+    # st.title("Hello World  ")
+    st.title("AI Assistant : openAI + Streamlit 😎")
+    st.markdown("## This is streamlit project connect to OpenAI")
+    
     """
     This is a Python script that serves as a frontend for a conversational AI model built with the `langchain` and `llms` libraries.
     The code creates a web application using Streamlit, a Python library for building interactive web apps.
@@ -378,7 +382,7 @@ def Open_AI():
     
 
     # Set Streamlit page configuration
-    st.set_page_config(page_title='🧠MemoryBot🤖', layout='wide')
+    # st.set_page_config(page_title='🧠MemoryBot🤖', layout='wide')
     # Initialize session states
     if "generated" not in st.session_state:
         st.session_state["generated"] = []
