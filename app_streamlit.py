@@ -449,10 +449,7 @@ def Open_AI():
     openai.api_base = "https://chem-dm-openai-dev01.openai.azure.com/"
     openai.api_version = "2022-12-01"
     openai.api_key = API_O
-    
-    #input text
-    st.text_input("Your question to ChatGPT about furnace ", key="question")
-   
+
 
     response = openai.Completion.create(
     engine="gpt-35",#"davinci-003",
