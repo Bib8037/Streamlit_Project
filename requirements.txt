@@ -9,6 +9,4 @@ langchain
 openai
 datetime
 gtts
-# pygame
 tempfile
-# pydub
