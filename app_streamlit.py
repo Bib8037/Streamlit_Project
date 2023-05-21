@@ -441,8 +441,10 @@ def Open_AI():
     #input text
     st.text_input("Your question to ChatGPT about furnace ", key="question")
     question = st.session_state.question
-    prompt = f"""Your task is to help answer '''{question}'''"""
 
+    prompt = f"""<|im_start|>systemAssistant is a highly intelligent chatbot designed to help users answer heater technical questions. 
+    <|im_end|><|im_start|>user{question}
+    <|im_end|><|im_start|>assistant"""
     # Ask the user to enter their OpenAI API key
     API_O = st.sidebar.text_input("API-KEY", type="password")
     openai.api_type = "azure"
